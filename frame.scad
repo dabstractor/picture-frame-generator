@@ -36,7 +36,7 @@ frame_h = 6.5; // [1:0.5:50]
 lip_w = 9; // [1:0.5:50]
 
 // Height of the retaining lip (mm)
-lip_h = 2.4; // [0:0.4:10]
+lip_h = 9; // [0:0.4:10]
 
 /* [Woodgrain Texture Settings] */
 // Likelyhood of Woodgrain (0.0 to 1.0)
@@ -66,20 +66,20 @@ glass_gutter_h = 3; // [0:0.1:20]
 
 /* [Screwhole Settings] */
 // Diameter of screw head (mm)
-screw_head_d = 10; // [0:0.1:20]
+screw_head_d = 9; // [0:0.1:20]
 // height of screw head (mm)
 screw_head_h = 4; // [0:0.1:20]
 // Diameter of screw shaft (mm)
-screw_shaft_d = 4.5; // [0:0.1:10]
+screw_shaft_d = 7; // [0:0.1:10]
 
 // Margin between the wall and the screwhole (mm)
-screw_hole_margin = 3; // [0:0.1:10]
+screw_hole_margin = 5; // [0:0.1:10]
 // Margin around the screw (mm)
-screw_margin = .5; // [0:0.1:2]
+screw_margin = 1; // [0:0.1:2]
 // Distance from outer face to screw hole cutout (mm)
-screw_hole_edge_offset = 16; // [1:0.5:50]
+screw_hole_edge_offset = 20; // [1:0.5:50]
 // How many positions on the screwhole
-num_screw_positions = 7; // [3:4:23]
+num_screw_positions = 3; // [3:4:23]
 
 /* [Dovetail Connectors] */
 // Margin between the edges of the frame and the dovetail (mm)
@@ -296,15 +296,15 @@ module screw_cutout(side_index, length) {
   slot_depth = screw_hole_margin + screw_head_h + (screw_margin * 2);
   tiny_eps = head_slot_w * .001;
   edge_offset = screw_hole_edge_offset;
-  shaft_center = edge_offset + (head_slot_w / 2) + screw_margin;
-  head_end = frame_w - gutter_depth + edge_offset - screw_hole_margin * 1.5;
+  head_end = min(frame_w - gutter_depth, edge_offset + head_slot_w + screw_hole_margin);
+  shaft_center = min(edge_offset + (head_slot_w / 2) + screw_margin, head_end - screw_margin);
   position_spacing = 0.6;
   total_slot_length = (head_slot_w - shaft_slot_w) + (shaft_slot_w * (num_screw_positions - 1) * position_spacing + shaft_slot_w);
   has_hole = (screw_hole >= 1 && side_index == 0) || (screw_hole >= 2 && side_index == 2) || (screw_hole >= 3 && side_index == 1) || (screw_hole >= 4 && side_index == 3);
   if (has_hole)
     translate([-total_slot_length / 2 + half_length, 0])
       union() {
-        translate([0, 0, -total_h])
+        translate([0, 0, -total_h / 2])
           rotate([90, 0, 90])
             linear_extrude(total_slot_length, convexity=10)
               polygon(
