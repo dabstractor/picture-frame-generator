@@ -11,7 +11,7 @@ art_width = 171;
 art_height = 246;
 
 // Number of hanging holes
-screw_hole = 3; // [0: no screwhole, 1: 1 screwhole, 2: 2 screwholes, 3: 4 screwholes]
+screw_hole = 4; // [0: no screwhole, 1: 1 screwhole, 2: 2 screwholes, 3: 3 screwholes, 4: 4 screwholes]
 
 // Enable or disable the outer lip
 lip = true;
@@ -297,10 +297,10 @@ module screw_cutout(side_index, length) {
   tiny_eps = head_slot_w * .001;
   edge_offset = screw_hole_edge_offset;
   shaft_center = edge_offset + (head_slot_w / 2) + screw_margin;
-  head_end = frame_w - gutter_depth - screw_hole_margin / 2;
+  head_end = frame_w - gutter_depth + edge_offset - screw_hole_margin * 1.5;
   position_spacing = 0.6;
   total_slot_length = (head_slot_w - shaft_slot_w) + (shaft_slot_w * (num_screw_positions - 1) * position_spacing + shaft_slot_w);
-  has_hole = (screw_hole == 1 && side_index == 0) || (screw_hole == 2 && side_index % 2 == 0) || (screw_hole == 3);
+  has_hole = (screw_hole >= 1 && side_index == 0) || (screw_hole >= 2 && side_index == 2) || (screw_hole >= 3 && side_index == 1) || (screw_hole >= 4 && side_index == 3);
   if (has_hole)
     translate([-total_slot_length / 2 + half_length, 0])
       union() {
@@ -336,13 +336,13 @@ module straight_connectors() {
   h_connector_count = h_segments - 1;
   total_connectors = w_connector_count + h_connector_count;
   if (total_connectors > 0 && (display == 0 || display == 4)) {
-    union() for (i = [0:total_connectors * 2 - 1])
+    union()for (i = [0:total_connectors * 2 - 1])
       translate([i * total_h, -frame_h, -dovetail_margin - sink_depth])
         rotate([90, 0, -90])
           dovetail_shape(frame_w * 2, margin_between_straight_connectors, true);
   }
   if (total_connectors > 0 && display == 1) {
-    union() for (i = [0:w_connector_count - 1])
+    union()for (i = [0:w_connector_count - 1])
       translate([i * total_h, -frame_h, -dovetail_margin - sink_depth])
         rotate([90, 0, -90])
           dovetail_shape(frame_w * 2, margin_between_straight_connectors, true);
@@ -425,7 +425,7 @@ module apply_texture(profile_width, piece_length) {
 module woodgrain(piece_length, profile_width) {
   for (y = [0:tex_size:profile_width]) {
     x_step = 16;
-    translate([0, y, 0]) for (x = [0:x_step:piece_length]) {
+    translate([0, y, 0])for (x = [0:x_step:piece_length]) {
       if (rands(0, 100, 1)[0] < tex_threshold * 100) {
         translate([x, y, tex_depth])
           rotate([90, 0, rands(-2, 2, 1)[0]])
@@ -446,16 +446,18 @@ module grain(width, height) {
 
 // --- Top Bevel (thin strip at outer edge of profile) ---
 module top_bevel(width) {
-  polygon(points=[
-    [0, tex_depth],
-    [0, 0],
-    [-width, 0],
-    [-width, tex_depth],
-  ]);
+  polygon(
+    points=[
+      [0, tex_depth],
+      [0, 0],
+      [-width, 0],
+      [-width, tex_depth],
+    ]
+  );
 }
 
 // --- Inner Profile Cutout (placeholder) ---
-module inner_profile(width) {}
+module inner_profile(width){}
 
 // --- Corner Fillet Helpers ---
 function normalize_vec(v) = v / norm(v);
