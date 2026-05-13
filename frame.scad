@@ -11,7 +11,7 @@ art_width = 171;
 art_height = 246;
 
 // Number of hanging holes
-screw_hole = 4; // [0: no screwhole, 1: 1 screwhole, 2: 2 screwholes, 3: 4 screwholes]
+screw_hole = 3; // [0: no screwhole, 1: 1 screwhole, 2: 2 screwholes, 3: 4 screwholes]
 
 // Enable or disable the outer lip
 lip = true;
@@ -77,7 +77,7 @@ screw_hole_margin = 3; // [0:0.1:10]
 // Margin around the screw (mm)
 screw_margin = .5; // [0:0.1:2]
 // Distance from outer face to screw hole cutout (mm)
-screw_hole_edge_offset = 3; // [1:0.5:50]
+screw_hole_edge_offset = 16; // [1:0.5:50]
 // How many positions on the screwhole
 num_screw_positions = 7; // [3:4:23]
 
@@ -110,444 +110,437 @@ em = 30; // [0:1:200]
 // Resolution of circular features
 $fn = 32; // [16, 32, 64, 128]
 
-kcJtw = display;
-MywFF = art_unit;
-WMuZN = art_width;
-GibWo = art_height;
-FCwIP = screw_hole;
-GZiOZ = lip;
-agfaS = art_gutter;
-BtLgA = glass_gutter;
-omQsL = texture_enabled;
-pWOwC = frame_w;
-Lfxra = frame_h;
-yjKLF = lip_w;
-XoZTW = lip_h;
-Rmvyr = tex_threshold;
-jsnsv = tex_diameter;
-UVeDK = tex_size;
-soCKU = tex_depth;
-gHIHT = art_gutter_d;
-rQNyD = art_gutter_h;
-elVpn = glass_offset;
-EoJJw = glass_gutter_d;
-PpNnP = glass_gutter_h;
-imSWY = screw_head_d;
-cnmtq = screw_head_h;
-NTLyk = screw_shaft_d;
-gkcZK = screw_hole_margin;
-rNxYK = screw_hole_edge_offset;
-JPxqn = screw_margin;
-jYplO = num_screw_positions;
-sGTXG = dovetail_margin;
-dPinq = dovetail_corner_radius;
-xKcRZ = margin_between_corner_connectors;
-SOGbD = margin_between_straight_connectors;
-DYGss = straight_connector_sink_percentage;
-JCgFu = max_size;
-ztKaf = gap;
-GrOXZ = em;
-module gFrLM(yZfFS) { translate(yZfFS) children(); }
-module ZQcgr(yZfFS) { rotate(yZfFS) children(); }
-module dDNNX(YrUXn) { polygon(points=YrUXn); }
-module skoZn(LOoLr) { circle(r=LOoLr); }
-module AJLXE(mtWKX, FXVTv = false) { square(size=mtWKX, center=FXVTv); }
-module xfGvL(pZJbD, convexity = 10) { linear_extrude(pZJbD, convexity=10) children(); }
+// --- Computed Values ---
+art_w_mm = art_width * (art_unit == 0 ? 1 : 25.4);
+art_h_mm = art_height * (art_unit == 0 ? 1 : 25.4);
+art_gutter_h_val = !art_gutter ? 0 : art_gutter_h;
+glass_gutter_h_val = !glass_gutter ? 0 : glass_gutter_h;
+glass_offset_val = !glass_gutter ? 0 : glass_offset;
+lip_h_val = lip_h;
+total_h = frame_h + art_gutter_h_val + glass_gutter_h_val + glass_offset_val + lip_h_val;
+lip_z = -total_h + lip_h;
+art_gutter_z = lip_z + art_gutter_h_val;
+glass_offset_z = art_gutter_z + glass_offset_val;
+glass_gutter_z = glass_offset_z + glass_gutter_h_val;
+inner_w = art_w_mm - (!art_gutter ? 0 : art_gutter_d * 2);
+inner_h = art_h_mm - (!art_gutter ? 0 : art_gutter_d * 2);
+outer_w = inner_w + frame_w * 2;
+outer_h = inner_h + frame_w * 2;
+total_lip_w = frame_w + lip_w;
+has_gutters = art_gutter || glass_gutter;
+gutter_depth = (!art_gutter ? 0 : art_gutter_d) + (!glass_gutter ? 0 : glass_gutter_d);
+eps = 0.01;
+eps2 = 0.02;
+sink_depth = frame_w * straight_connector_sink_percentage;
 
-mdefs = WMuZN * (MywFF == 0 ? 1 : 25.4);
-YqVoY = GibWo * (MywFF == 0 ? 1 : 25.4);
-XbvlB = !agfaS ? 0 : rQNyD;
-DXMVn = !BtLgA ? 0 : PpNnP;
-gEDeq = !BtLgA ? 0 : elVpn;
-rViwk = XoZTW;
-JTsFD = Lfxra + XbvlB + DXMVn + gEDeq + rViwk;
-oWfOj = -JTsFD + XoZTW;
-rdWpW = oWfOj + XbvlB;
-IsglG = rdWpW + gEDeq;
-hraxB = IsglG + DXMVn;
-ywBRk = mdefs - (!agfaS ? 0 : gHIHT * 2);
-TktDa = YqVoY - (!agfaS ? 0 : gHIHT * 2);
-dEDvS = ywBRk + pWOwC * 2;
-YAJtc = TktDa + pWOwC * 2;
-awKnP = pWOwC + yjKLF;
-yVhVd = agfaS || BtLgA;
-fUmqh = (!agfaS ? 0 : gHIHT) + (!BtLgA ? 0 : EoJJw);
-JXfgF = 0 + 0.01;
-vfyUO = 0 + 0.02;
-yjrSz = pWOwC * DYGss;
-module CfdDZ(TGegK, index = 0, miter = true) {
-  iScTr = ceil(TGegK / JCgFu);
-  brbrL = iScTr % 2 == 1 ? 0 : 1;
-  BGGFp = iScTr + brbrL;
-  JpdCl = TGegK / BGGFp;
-  Gpiuo = BGGFp - 2;
-  GrOXZ = kcJtw == 0 ? JXfgF : kcJtw == 4 || kcJtw == 1 ? 5 : 0;
-  TGegK = BGGFp == 1 ? TGegK : TGegK + (JXfgF * (BGGFp - 1));
+// --- Frame Side Piece ---
+module frame_side(length, side_index = 0, miter = true) {
+  segments_raw = ceil(length / max_size);
+  even_adj = segments_raw % 2 == 1 ? 0 : 1;
+  num_segments = segments_raw + even_adj;
+  segment_length = length / num_segments;
+  inner_count = num_segments - 2;
+  print_gap = display == 0 ? eps : display == 4 || display == 1 ? 5 : 0;
+  adjusted_length = num_segments == 1 ? length : length + (eps * (num_segments - 1));
   difference() {
-    if (BGGFp == 1) {
-      gFrLM([TGegK / 2, pWOwC, 0])
+    if (num_segments == 1) {
+      translate([adjusted_length / 2, frame_w, 0])
         union() {
-          YVcxr(index, TGegK / 2, miter)
-            ObpXp(TGegK / 2, miter);
+          apply_dovetail(side_index, adjusted_length / 2, miter)
+            frame_profile(adjusted_length / 2, miter);
           mirror([1, 0, 0])
-            YVcxr(index, TGegK / 2, miter)
-              ObpXp(TGegK / 2, miter);
+            apply_dovetail(side_index, adjusted_length / 2, miter)
+              frame_profile(adjusted_length / 2, miter);
         }
     } else {
-      gFrLM([JpdCl, pWOwC, 0])
-        YVcxr(index, JpdCl, false, true, true)
-          YVcxr(index, JpdCl, miter)
-            ObpXp(JpdCl, miter);
-      for (i = [1:Gpiuo]) {
-        gFrLM([JpdCl + (JpdCl + GrOXZ) * i, pWOwC, 0])
-          YVcxr(-1, JpdCl, false, true, true)
-            YVcxr(-1, JpdCl, false, false, true)
-              ObpXp(JpdCl, false);
+      translate([segment_length, frame_w, 0])
+        apply_dovetail(side_index, segment_length, false, true, true)
+          apply_dovetail(side_index, segment_length, miter)
+            frame_profile(segment_length, miter);
+      for (i = [1:inner_count]) {
+        translate([segment_length + (segment_length + print_gap) * i, frame_w, 0])
+          apply_dovetail(-1, segment_length, false, true, true)
+            apply_dovetail(-1, segment_length, false, false, true)
+              frame_profile(segment_length, false);
       }
-      gFrLM([(TGegK + (GrOXZ * (BGGFp - 1))) - JpdCl, pWOwC, 0])
+      translate([(adjusted_length + (print_gap * (num_segments - 1))) - segment_length, frame_w, 0])
         mirror([1, 0, 0])
-          YVcxr(index, JpdCl, false, true, true)
-            YVcxr(index, JpdCl, miter)
-              ObpXp(JpdCl, miter);
+          apply_dovetail(side_index, segment_length, false, true, true)
+            apply_dovetail(side_index, segment_length, miter)
+              frame_profile(segment_length, miter);
     }
-    PxUPl(pWOwC, TGegK);
-    dvxbT(index, TGegK);
+    apply_texture(frame_w, adjusted_length);
+    screw_cutout(side_index, adjusted_length);
   }
 }
-module YVcxr(index = 0, l, miter = true, other_side = false, pin = false) {
+
+// --- Dovetail Connector (add/subtract) ---
+module apply_dovetail(side_index = 0, seg_length, miter = true, other_side = false, pin = false) {
   if (miter) {
-    if (index % 2 == 0) {
+    if (side_index % 2 == 0) {
       union() {
-        gFrLM([-l, -pWOwC, 0])
-          tjxtv(pWOwC + JXfgF, xKcRZ, pin=pin);
+        translate([-seg_length, -frame_w, 0])
+          dovetail_shape(frame_w + eps, margin_between_corner_connectors, pin=pin);
         children();
       }
     } else {
       difference() {
         children();
-        gFrLM([-l, sGTXG * 2, 0])
-          ZQcgr([0, 0, -90])
-            tjxtv(pWOwC + JXfgF + xKcRZ, pin=pin);
+        translate([-seg_length, dovetail_margin * 2, 0])
+          rotate([0, 0, -90])
+            dovetail_shape(frame_w + eps + margin_between_corner_connectors, pin=pin);
       }
     }
   } else {
     if (!other_side) {
       difference() {
         children();
-        gFrLM([-l - sGTXG - JXfgF, -pWOwC, 0])
-          tjxtv(pWOwC + vfyUO + xKcRZ, pin=pin);
+        translate([-seg_length - dovetail_margin - eps, -frame_w, 0])
+          dovetail_shape(frame_w + eps2 + margin_between_corner_connectors, pin=pin);
       }
     } else {
       difference() {
         children();
-        gFrLM([-sGTXG - (pWOwC - JXfgF + xKcRZ), -pWOwC, 0])
-          tjxtv(pWOwC + vfyUO + xKcRZ, pin=pin);
+        translate([-dovetail_margin - (frame_w - eps + margin_between_corner_connectors), -frame_w, 0])
+          dovetail_shape(frame_w + eps2 + margin_between_corner_connectors, pin=pin);
       }
     }
   }
 }
-module ObpXp(GMgzm, miter = true) {
-  module mSDGh() {
+
+// --- Frame Profile (cross-section extruded along length) ---
+module frame_profile(length, miter = true) {
+  module profile_shape() {
     difference() {
       union() {
-        gFrLM([-pWOwC, -JTsFD])
-          AJLXE([pWOwC, JTsFD]);
-        ArmeY(pWOwC);
-        if (GZiOZ) {
-          gFrLM([0, oWfOj - XoZTW])
-            AJLXE([yjKLF, XoZTW]);
+        translate([-frame_w, -total_h])
+          square([frame_w, total_h]);
+        top_bevel(frame_w);
+        if (lip) {
+          translate([0, lip_z - lip_h])
+            square([lip_w, lip_h]);
         }
       }
-      rFNHe(pWOwC);
-      if (agfaS) {
-        gFrLM([-gHIHT, rdWpW - rQNyD])
-          AJLXE([gHIHT * 2, rQNyD]);
+      inner_profile(frame_w);
+      if (art_gutter) {
+        translate([-art_gutter_d, art_gutter_z - art_gutter_h])
+          square([art_gutter_d * 2, art_gutter_h]);
       }
-      if (BtLgA) {
-        gFrLM([-EoJJw, hraxB - PpNnP])
-          AJLXE([EoJJw * 2, PpNnP]);
+      if (glass_gutter) {
+        translate([-glass_gutter_d, glass_gutter_z - glass_gutter_h])
+          square([glass_gutter_d * 2, glass_gutter_h]);
       }
     }
   }
   difference() {
-    ZQcgr([90, 0, 90])
-      gFrLM([0, 0, -GMgzm])
-        xfGvL(GMgzm, convexity=10)
-          mSDGh();
+    rotate([90, 0, 90])
+      translate([0, 0, -length])
+        linear_extrude(length, convexity=10)
+          profile_shape();
     if (miter) {
-      gFrLM([-GMgzm + pWOwC, 0, -JTsFD - JXfgF])
-        xfGvL(JTsFD + 20)
-          dDNNX(
-            YrUXn=[
-              [-pWOwC - JXfgF, -pWOwC - JXfgF],
-              [yjKLF + JXfgF, yjKLF + JXfgF],
-              [-pWOwC - JXfgF, yjKLF + JXfgF],
+      translate([-length + frame_w, 0, -total_h - eps])
+        linear_extrude(total_h + 20, convexity=10)
+          polygon(
+            points=[
+              [-frame_w - eps, -frame_w - eps],
+              [lip_w + eps, lip_w + eps],
+              [-frame_w - eps, lip_w + eps],
             ]
           );
     }
   }
 }
-module tjxtv(TGegK, extra_margin = 0, pin = false) {
-  jmPGm = dPinq - extra_margin / 2;
-  mAgNE = sGTXG + extra_margin;
-  EbNdK = mAgNE + jmPGm;
-  BDnpy = pWOwC - fUmqh;
-  bbyRW = [JTsFD / 2, EbNdK];
-  LMQEw = [JTsFD - EbNdK, BDnpy * .66];
-  sBpHW = [JTsFD / 2, pWOwC - fUmqh - EbNdK];
-  SSppi = [EbNdK, BDnpy * .66];
-  gFrLM([mAgNE, 0, 0])
-    ZQcgr([0, 90, 00])
-      xfGvL(TGegK)
+
+// --- Dovetail Shape (rounded trapezoid) ---
+module dovetail_shape(length, extra_margin = 0, pin = false) {
+  fillet_r = dovetail_corner_radius - extra_margin / 2;
+  margin_offset = dovetail_margin + extra_margin;
+  offset_r = margin_offset + fillet_r;
+  usable_depth = frame_w - gutter_depth;
+  pos_top = [total_h / 2, offset_r];
+  pos_right = [total_h - offset_r, usable_depth * .66];
+  pos_bottom = [total_h / 2, frame_w - gutter_depth - offset_r];
+  pos_left = [offset_r, usable_depth * .66];
+  translate([margin_offset, 0, 0])
+    rotate([0, 90, 00])
+      linear_extrude(length, convexity=10)
         difference() {
           hull() {
-            gFrLM(bbyRW)
-              skoZn(LOoLr=jmPGm);
-            gFrLM(LMQEw)
-              skoZn(LOoLr=jmPGm);
-            gFrLM(sBpHW)
-              skoZn(LOoLr=jmPGm);
-            gFrLM(SSppi)
-              skoZn(LOoLr=jmPGm);
+            translate(pos_top)
+              circle(r=fillet_r);
+            translate(pos_right)
+              circle(r=fillet_r);
+            translate(pos_bottom)
+              circle(r=fillet_r);
+            translate(pos_left)
+              circle(r=fillet_r);
           }
           if (pin) {
-            dDNNX(
-              YrUXn=[
+            polygon(
+              points=[
                 [0, 0],
-                [0, yjrSz + mAgNE],
-                [JTsFD, yjrSz + mAgNE],
-                [JTsFD, 0],
+                [0, sink_depth + margin_offset],
+                [total_h, sink_depth + margin_offset],
+                [total_h, 0],
               ]
             );
           }
         }
 }
-module dvxbT(index, TGegK) {
-  GMgzm = TGegK / 2;
-  bDFzZ = imSWY + (JPxqn * 2);
-  ukMdT = NTLyk + (JPxqn * 2);
-  Ukdeb = gkcZK + cnmtq + (JPxqn * 2);
-  NGvir = bDFzZ * .001;
-  mAgNE = rNxYK;
-  jCHoz = mAgNE + (bDFzZ / 2) + JPxqn;
-  DFJov = pWOwC - fUmqh - gkcZK / 2;
-  ztKaf = 0.6;
-  zAadL = (bDFzZ - ukMdT) + (ukMdT * (jYplO - 1) * ztKaf + ukMdT);
-  rJMft = (FCwIP == 1 && index == 0) || (FCwIP == 2 && index % 2 == 0) || (FCwIP == 3);
-  if (rJMft)
-    gFrLM([-zAadL / 2 + GMgzm, 0])
+
+// --- Screw Hole Cutout ---
+module screw_cutout(side_index, length) {
+  half_length = length / 2;
+  head_slot_w = screw_head_d + (screw_margin * 2);
+  shaft_slot_w = screw_shaft_d + (screw_margin * 2);
+  slot_depth = screw_hole_margin + screw_head_h + (screw_margin * 2);
+  tiny_eps = head_slot_w * .001;
+  edge_offset = screw_hole_edge_offset;
+  shaft_center = edge_offset + (head_slot_w / 2) + screw_margin;
+  head_end = frame_w - gutter_depth - screw_hole_margin / 2;
+  position_spacing = 0.6;
+  total_slot_length = (head_slot_w - shaft_slot_w) + (shaft_slot_w * (num_screw_positions - 1) * position_spacing + shaft_slot_w);
+  has_hole = (screw_hole == 1 && side_index == 0) || (screw_hole == 2 && side_index % 2 == 0) || (screw_hole == 3);
+  if (has_hole)
+    translate([-total_slot_length / 2 + half_length, 0])
       union() {
-        gFrLM([0, 0, -JTsFD])
-          ZQcgr([90, 0, 90])
-            xfGvL(zAadL)
-              dDNNX(
-                YrUXn=[
-                  [DFJov, 0],
-                  [DFJov - Ukdeb * .66, Ukdeb],
-                  [mAgNE, Ukdeb],
-                  [mAgNE, gkcZK],
-                  [jCHoz - NGvir, gkcZK],
-                  [jCHoz - NGvir, 0],
+        translate([0, 0, -total_h])
+          rotate([90, 0, 90])
+            linear_extrude(total_slot_length, convexity=10)
+              polygon(
+                points=[
+                  [head_end, 0],
+                  [head_end - slot_depth * .66, slot_depth],
+                  [edge_offset, slot_depth],
+                  [edge_offset, screw_hole_margin],
+                  [shaft_center - tiny_eps, screw_hole_margin],
+                  [shaft_center - tiny_eps, 0],
                 ]
               );
-        for (i = [0:jYplO - 1])
-          gFrLM([(bDFzZ / 2) + (i * (ukMdT * ztKaf)), jCHoz, -JTsFD])
-            xfGvL(gkcZK)
-              skoZn(LOoLr=ukMdT / 2, $fn=4);
+        for (i = [0:num_screw_positions - 1])
+          translate([(head_slot_w / 2) + (i * (shaft_slot_w * position_spacing)), shaft_center, -total_h])
+            linear_extrude(screw_hole_margin, convexity=10)
+              circle(r=shaft_slot_w / 2, $fn=4);
       }
 }
-module MRVUd() {
-  XccXV = ceil(dEDvS / JCgFu);
-  jKFDA = XccXV % 2 == 1 ? 0 : 1;
-  gQafS = XccXV + jKFDA;
-  owCQv = gQafS - 1;
-  ABksr = ceil(YAJtc / JCgFu);
-  ZQdEW = ABksr % 2 == 1 ? 0 : 1;
-  FeWrd = ABksr + ZQdEW;
-  WlLJm = FeWrd - 1;
-  SbaYO = owCQv + WlLJm;
-  if (SbaYO > 0 && (kcJtw == 0 || kcJtw == 4)) {
-    union()for (i = [0:SbaYO * 2 - 1])
-      gFrLM([i * JTsFD, -Lfxra, -sGTXG - yjrSz])
-        ZQcgr([90, 0, -90])
-          tjxtv(pWOwC * 2, SOGbD, true);
+
+// --- Straight Dovetail Connectors ---
+module straight_connectors() {
+  w_segments_raw = ceil(outer_w / max_size);
+  w_even_adj = w_segments_raw % 2 == 1 ? 0 : 1;
+  w_segments = w_segments_raw + w_even_adj;
+  w_connector_count = w_segments - 1;
+  h_segments_raw = ceil(outer_h / max_size);
+  h_even_adj = h_segments_raw % 2 == 1 ? 0 : 1;
+  h_segments = h_segments_raw + h_even_adj;
+  h_connector_count = h_segments - 1;
+  total_connectors = w_connector_count + h_connector_count;
+  if (total_connectors > 0 && (display == 0 || display == 4)) {
+    union() for (i = [0:total_connectors * 2 - 1])
+      translate([i * total_h, -frame_h, -dovetail_margin - sink_depth])
+        rotate([90, 0, -90])
+          dovetail_shape(frame_w * 2, margin_between_straight_connectors, true);
   }
-  if (SbaYO > 0 && kcJtw == 1) {
-    union()for (i = [0:owCQv - 1])
-      gFrLM([i * JTsFD, -Lfxra, -sGTXG - yjrSz])
-        ZQcgr([90, 0, -90])
-          tjxtv(pWOwC * 2, SOGbD, true);
+  if (total_connectors > 0 && display == 1) {
+    union() for (i = [0:w_connector_count - 1])
+      translate([i * total_h, -frame_h, -dovetail_margin - sink_depth])
+        rotate([90, 0, -90])
+          dovetail_shape(frame_w * 2, margin_between_straight_connectors, true);
   }
 }
-module YDpPw() {
-  if (kcJtw == 0) {
-    gFrLM([0, JTsFD, 0])
-      ZQcgr([90, 0, 00])
-        gFrLM([0, 0, JTsFD]) {
-          CfdDZ(dEDvS, 0);
-          gFrLM([0, 0, -(JTsFD + ztKaf) * 1])
-            CfdDZ(YAJtc, 1);
-          gFrLM([0, 0, -(JTsFD + ztKaf) * 2])
-            CfdDZ(YAJtc, 3);
-          gFrLM([0, 0, -(JTsFD + ztKaf) * 3])
-            CfdDZ(dEDvS, 2);
+
+// --- Frame Layout (assembles all sides based on display mode) ---
+module frame_layout() {
+  if (display == 0) {
+    translate([0, total_h, 0])
+      rotate([90, 0, 00])
+        translate([0, 0, total_h]) {
+          frame_side(outer_w, 0);
+          translate([0, 0, -(total_h + gap) * 1])
+            frame_side(outer_h, 1);
+          translate([0, 0, -(total_h + gap) * 2])
+            frame_side(outer_h, 3);
+          translate([0, 0, -(total_h + gap) * 3])
+            frame_side(outer_w, 2);
         }
   }
-  if (kcJtw == 1) {
-    CfdDZ(dEDvS, 0);
+  if (display == 1) {
+    frame_side(outer_w, 0);
   }
-  if (kcJtw == 2) {
+  if (display == 2) {
     difference() {
-      CfdDZ(dEDvS, 0);
-      gFrLM([0, 0, -JTsFD])
-        xfGvL(JTsFD * 2)
-          scale([dEDvS / 2, pWOwC + yjKLF, JTsFD + JXfgF])
-            AJLXE();
+      frame_side(outer_w, 0);
+      translate([0, 0, -total_h])
+        linear_extrude(total_h * 2, convexity=10)
+          scale([outer_w / 2, frame_w + lip_w, total_h + eps])
+            square();
     }
   }
-  if (kcJtw == 3) {
-    CfdDZ(dEDvS, 0);
-    gFrLM([0, YAJtc, 0])
-      ZQcgr([0, 0, -90])
-        CfdDZ(YAJtc, 1);
-    gFrLM([dEDvS, YAJtc, 0])
-      ZQcgr([0, 0, 180])
-        CfdDZ(dEDvS, 2);
-    gFrLM([dEDvS, 0, 0])
-      ZQcgr([0, 0, 90])
-        CfdDZ(YAJtc, 3);
+  if (display == 3) {
+    frame_side(outer_w, 0);
+    translate([0, outer_h, 0])
+      rotate([0, 0, -90])
+        frame_side(outer_h, 1);
+    translate([outer_w, outer_h, 0])
+      rotate([0, 0, 180])
+        frame_side(outer_w, 2);
+    translate([outer_w, 0, 0])
+      rotate([0, 0, 90])
+        frame_side(outer_h, 3);
   }
-  if (kcJtw == 4) {
-    vBwiO = GrOXZ * 2;
-    gFrLM([GrOXZ, 0, 0])
-      CfdDZ(dEDvS, 0);
-    gFrLM([0, YAJtc + GrOXZ, 0])
-      ZQcgr([0, 0, -90])
-        CfdDZ(YAJtc, 1);
-    gFrLM([dEDvS + GrOXZ, YAJtc + vBwiO, 0])
-      ZQcgr([0, 0, 180])
-        CfdDZ(dEDvS, 2);
-    gFrLM([dEDvS + vBwiO, GrOXZ, 0])
-      ZQcgr([0, 0, 90])
-        CfdDZ(YAJtc, 3);
+  if (display == 4) {
+    double_gap = em * 2;
+    translate([em, 0, 0])
+      frame_side(outer_w, 0);
+    translate([0, outer_h + em, 0])
+      rotate([0, 0, -90])
+        frame_side(outer_h, 1);
+    translate([outer_w + em, outer_h + double_gap, 0])
+      rotate([0, 0, 180])
+        frame_side(outer_w, 2);
+    translate([outer_w + double_gap, em, 0])
+      rotate([0, 0, 90])
+        frame_side(outer_h, 3);
   }
-  if (kcJtw == 5) {
-    ZQcgr([180, 0, 0])
-      CfdDZ(dEDvS, 0);
-  }
-}
-module ChwUQ() {
-  YDpPw();
-  MRVUd();
-}
-module PxUPl(width, TGegK) {
-  if (omQsL) {
-    render(convexity=4) fMGXy(TGegK, width);
+  if (display == 5) {
+    rotate([180, 0, 0])
+      frame_side(outer_w, 0);
   }
 }
-module fMGXy(width, height) {
-  for (y = [0:UVeDK:height]) {
-    njdeR = 16;
-    gFrLM([0, y, 0])for (x = [0:njdeR:width]) {
-      if (rands(0, 100, 1)[0] < Rmvyr * 100) {
-        gFrLM([x, y, soCKU])
-          ZQcgr([90, 0, rands(-2, 2, 1)[0]])
-            gFrLM([0, (jsnsv / 2), 0])
-              gFrLM([0, -soCKU * rands(.5, 1, 1)[0], 0])
-                IAfJm(jsnsv + (rands(jsnsv, jsnsv * 10, 1)[0]), jsnsv);
+
+// --- Main Entry Point ---
+module main() {
+  frame_layout();
+  straight_connectors();
+}
+
+// --- Texture Subtraction ---
+module apply_texture(profile_width, piece_length) {
+  if (texture_enabled) {
+    render(convexity=4) woodgrain(piece_length, profile_width);
+  }
+}
+
+// --- Woodgrain Pattern ---
+module woodgrain(piece_length, profile_width) {
+  for (y = [0:tex_size:profile_width]) {
+    x_step = 16;
+    translate([0, y, 0]) for (x = [0:x_step:piece_length]) {
+      if (rands(0, 100, 1)[0] < tex_threshold * 100) {
+        translate([x, y, tex_depth])
+          rotate([90, 0, rands(-2, 2, 1)[0]])
+            translate([0, (tex_diameter / 2), 0])
+              translate([0, -tex_depth * rands(.5, 1, 1)[0], 0])
+                grain(tex_diameter + (rands(tex_diameter, tex_diameter * 10, 1)[0]), tex_diameter);
       }
     }
   }
 }
-module IAfJm(width, height) {
-  xfGvL(pZJbD=soCKU * rands(.6, 1.4, 1)[0]) {
-    resize([width, height]) skoZn(d=10, $fn=100);
+
+// --- Single Grain Line ---
+module grain(width, height) {
+  linear_extrude(tex_depth * rands(.6, 1.4, 1)[0], convexity=10) {
+    resize([width, height]) circle(d=10, $fn=100);
   }
 }
-module ArmeY(width) {
-  ZRSXy = [
-    [0, soCKU],
+
+// --- Top Bevel (thin strip at outer edge of profile) ---
+module top_bevel(width) {
+  polygon(points=[
+    [0, tex_depth],
     [0, 0],
     [-width, 0],
-    [-width, soCKU],
-  ];
-  dDNNX(YrUXn=ZRSXy);
+    [-width, tex_depth],
+  ]);
 }
-module rFNHe(width){}
-function _u(v) = v / norm(v);
-module jDBam(pts, r) {
+
+// --- Inner Profile Cutout (placeholder) ---
+module inner_profile(width) {}
+
+// --- Corner Fillet Helpers ---
+function normalize_vec(v) = v / norm(v);
+
+module corner_fillet(pts, r) {
   let (
-    mIfck = pts[0],
+    p1 = pts[0],
     p2 = pts[1],
     p3 = pts[2],
-    mHSPE = _u(mIfck - p2),
-    XCHIg = _u(p3 - p2),
-    CcxpN = acos(mHSPE * XCHIg),
-    LvLjx = r / tan(CcxpN / 2),
-    aiEBz = r / sin(CcxpN / 2),
-    YFqDy = p2 + LvLjx * mHSPE,
-    FDzCC = p2 + LvLjx * XCHIg,
-    oRvey = p2 + aiEBz * _u(mHSPE + XCHIg)
+    v1 = normalize_vec(p1 - p2),
+    v2 = normalize_vec(p3 - p2),
+    angle = acos(v1 * v2),
+    tangent_len = r / tan(angle / 2),
+    bisector_len = r / sin(angle / 2),
+    tangent_pt1 = p2 + tangent_len * v1,
+    tangent_pt2 = p2 + tangent_len * v2,
+    arc_center = p2 + bisector_len * normalize_vec(v1 + v2)
   )
   difference() {
-    dDNNX([p2, YFqDy, FDzCC]);
-    gFrLM(oRvey) skoZn(LOoLr=r);
+    polygon(points=[p2, tangent_pt1, tangent_pt2]);
+    translate(arc_center) circle(r=r);
   }
 }
-module zxWvy(pts, r, enabled = true) {
+
+module subtract_fillet(pts, r, enabled = true) {
   difference() {
     children();
     if (enabled)
-      jDBam(pts, r);
+      corner_fillet(pts, r);
   }
 }
-module loGVd(pts, r, enabled = true) {
+
+module add_fillet(pts, r, enabled = true) {
   union() {
     children();
     if (enabled)
-      jDBam(pts, r);
+      corner_fillet(pts, r);
   }
 }
-function check_corner(mIfck, p2, p3) =
-  let (val = (p2.x - mIfck.x) * (p3.y - p2.y) - (p2.y - mIfck.y) * (p3.x - p2.x)) (val > 0) ? 1 : ( (val < 0) ? -1 : 0);
+
+function check_corner(p1, p2, p3) =
+  let (val = (p2.x - p1.x) * (p3.y - p2.y) - (p2.y - p1.y) * (p3.x - p2.x)) (val > 0) ? 1 : ( (val < 0) ? -1 : 0);
+
 function get_corner_triplet(pts, i) =
   let (n = len(pts)) [
       pts[ (i - 1 + n) % n],
       pts[i % n],
       pts[ (i + 1) % n],
   ];
-module enAsG(all_points, index, jmPGm) {
-  ZRSXy = get_corner_triplet(all_points, index);
-  YWiwD = check_corner(ZRSXy[0], ZRSXy[1], ZRSXy[2]);
-  if (YWiwD < 0) {
-    zxWvy(ZRSXy, jmPGm, true)
+
+module apply_corner(all_points, index, fillet_r) {
+  triplet = get_corner_triplet(all_points, index);
+  direction = check_corner(triplet[0], triplet[1], triplet[2]);
+  if (direction < 0) {
+    subtract_fillet(triplet, fillet_r, true)
       children();
-  } else if (YWiwD > 0) {
-    loGVd(ZRSXy, jmPGm, true)
+  } else if (direction > 0) {
+    add_fillet(triplet, fillet_r, true)
       children();
   } else {
     children();
   }
 }
-module nhoTE(w, l, density = 0.8, cutoff = 0.7) {
-  wWRuO = 2;
-  uEGHA = 5;
-  for (x = [0:wWRuO:w]) {
-    cAKqp = rands(-1, 1, 1)[0];
-    for (y = [0:uEGHA:l]) {
+
+// --- Noise Texture ---
+module noise_pattern(w, l, density = 0.8, cutoff = 0.7) {
+  x_step = 2;
+  y_step = 5;
+  for (x = [0:x_step:w]) {
+    x_jitter = rands(-1, 1, 1)[0];
+    for (y = [0:y_step:l]) {
       if (rands(0, 1, 1)[0] > cutoff) {
-        eHNJS = rands(0, 0.5, 1)[0];
-        wSLXn = rands(0, 0.5, 1)[0];
-        KnyVP = rands(-0.5, 0.5, 1)[0];
-        EpEqa = rands(-0.5, 0.5, 1)[0];
+        r1 = rands(0, 0.5, 1)[0];
+        r2 = rands(0, 0.5, 1)[0];
+        jitter1 = rands(-0.5, 0.5, 1)[0];
+        jitter2 = rands(-0.5, 0.5, 1)[0];
         hull() {
-          gFrLM([x + cAKqp + KnyVP, y, 0])
-            skoZn(LOoLr=eHNJS, $fn=8);
-          gFrLM([x + cAKqp + EpEqa, y + uEGHA, 0])
-            skoZn(LOoLr=wSLXn, $fn=8);
+          translate([x + x_jitter + jitter1, y, 0])
+            circle(r=r1, $fn=8);
+          translate([x + x_jitter + jitter2, y + y_step, 0])
+            circle(r=r2, $fn=8);
         }
       }
     }
   }
 }
-ChwUQ();
+
+main();
