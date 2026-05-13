@@ -293,35 +293,15 @@ module screw_cutout(side_index, length) {
   half_length = length / 2;
   head_slot_w = screw_head_d + (screw_margin * 2);
   shaft_slot_w = screw_shaft_d + (screw_margin * 2);
-  slot_depth = screw_hole_margin + screw_head_h + (screw_margin * 2);
-  tiny_eps = head_slot_w * .001;
-  edge_offset = screw_hole_edge_offset;
-  head_end = min(frame_w - gutter_depth, edge_offset + head_slot_w + screw_hole_margin);
-  shaft_center = min(edge_offset + (head_slot_w / 2) + screw_margin, head_end - screw_margin);
   position_spacing = 0.6;
   total_slot_length = (head_slot_w - shaft_slot_w) + (shaft_slot_w * (num_screw_positions - 1) * position_spacing + shaft_slot_w);
   has_hole = (screw_hole >= 1 && side_index == 0) || (screw_hole >= 2 && side_index == 2) || (screw_hole >= 3 && side_index == 1) || (screw_hole >= 4 && side_index == 3);
   if (has_hole)
-    translate([-total_slot_length / 2 + half_length, 0])
-      union() {
-        translate([0, 0, -total_h / 2])
-          rotate([90, 0, 90])
-            linear_extrude(total_slot_length, convexity=10)
-              polygon(
-                points=[
-                  [head_end, 0],
-                  [head_end - slot_depth * .66, slot_depth],
-                  [edge_offset, slot_depth],
-                  [edge_offset, screw_hole_margin],
-                  [shaft_center - tiny_eps, screw_hole_margin],
-                  [shaft_center - tiny_eps, 0],
-                ]
-              );
-        for (i = [0:num_screw_positions - 1])
-          translate([(head_slot_w / 2) + (i * (shaft_slot_w * position_spacing)), shaft_center, -total_h])
-            linear_extrude(screw_hole_margin, convexity=10)
-              circle(r=shaft_slot_w / 2, $fn=4);
-      }
+    translate([-total_slot_length / 2 + half_length, 0, 0])
+      for (i = [0:num_screw_positions - 1])
+        translate([(head_slot_w / 2) + (i * (shaft_slot_w * position_spacing)), screw_hole_edge_offset, -total_h])
+          linear_extrude(screw_hole_margin, scale=2, convexity=10)
+            circle(r=shaft_slot_w / 2, $fn=4);
 }
 
 // --- Straight Dovetail Connectors ---
