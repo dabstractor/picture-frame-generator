@@ -33,7 +33,7 @@ frame_w = 22; // [5:0.5:100]
 frame_h = 6.5; // [1:0.5:50]
 
 // Width of the retaining lip (mm)
-lip_w = 5; // [1:0.5:50]
+lip_w = 9; // [1:0.5:50]
 
 // Height of the retaining lip (mm)
 lip_h = 2.4; // [0:0.4:10]
@@ -76,8 +76,10 @@ screw_shaft_d = 4.5; // [0:0.1:10]
 screw_hole_margin = 3; // [0:0.1:10]
 // Margin around the screw (mm)
 screw_margin = .5; // [0:0.1:2]
+// Distance from outer face to screw hole cutout (mm)
+screw_hole_edge_offset = 3; // [1:0.5:50]
 // How many positions on the screwhole
-num_screw_positions = 3; // [3:4:23]
+num_screw_positions = 7; // [3:4:23]
 
 /* [Dovetail Connectors] */
 // Margin between the edges of the frame and the dovetail (mm)
@@ -134,6 +136,7 @@ imSWY = screw_head_d;
 cnmtq = screw_head_h;
 NTLyk = screw_shaft_d;
 gkcZK = screw_hole_margin;
+rNxYK = screw_hole_edge_offset;
 JPxqn = screw_margin;
 jYplO = num_screw_positions;
 sGTXG = dovetail_margin;
@@ -325,7 +328,7 @@ module dvxbT(index, TGegK) {
   ukMdT = NTLyk + (JPxqn * 2);
   Ukdeb = gkcZK + cnmtq + (JPxqn * 2);
   NGvir = bDFzZ * .001;
-  mAgNE = gkcZK;
+  mAgNE = rNxYK;
   jCHoz = mAgNE + (bDFzZ / 2) + JPxqn;
   DFJov = pWOwC - fUmqh - gkcZK / 2;
   ztKaf = 0.6;
@@ -439,7 +442,7 @@ module ChwUQ() {
 }
 module PxUPl(width, TGegK) {
   if (omQsL) {
-    fMGXy(TGegK, width);
+    render(convexity=4) fMGXy(TGegK, width);
   }
 }
 module fMGXy(width, height) {
