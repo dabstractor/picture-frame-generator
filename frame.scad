@@ -11,7 +11,7 @@ art_width = 171;
 art_height = 246;
 
 // Number of hanging holes
-screw_hole = 4; // [0: no screwhole, 1: 1 screwhole, 2: 2 screwholes, 3: 3 screwholes, 4: 4 screwholes]
+screw_hole = 2; // [0: no screwhole, 1: 1 screwhole, 2: 2 screwholes, 3: 3 screwholes, 4: 4 screwholes]
 
 // Enable or disable the outer lip
 lip = true;
@@ -36,7 +36,7 @@ frame_h = 6.5; // [1:0.5:50]
 lip_w = 9; // [1:0.5:50]
 
 // Height of the retaining lip (mm)
-lip_h = 9; // [0:0.4:10]
+lip_h = 3; // [0:0.4:10]
 
 /* [Woodgrain Texture Settings] */
 // Likelyhood of Woodgrain (0.0 to 1.0)
@@ -68,12 +68,12 @@ glass_gutter_h = 3; // [0:0.1:20]
 // Diameter of screw head (mm)
 screw_head_d = 9; // [0:0.1:20]
 // height of screw head (mm)
-screw_head_h = 4; // [0:0.1:20]
+screw_head_h = 1; // [0:0.1:20]
 // Diameter of screw shaft (mm)
 screw_shaft_d = 7; // [0:0.1:10]
 
 // Margin between the wall and the screwhole (mm)
-screw_hole_margin = 5; // [0:0.1:10]
+screw_hole_margin = 1; // [0:0.1:10]
 // Margin around the screw (mm)
 screw_margin = 1; // [0:0.1:2]
 // Distance from outer face to screw hole cutout (mm)
