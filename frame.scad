@@ -11,7 +11,7 @@ art_width = 171;
 art_height = 246;
 
 // Number of hanging holes
-screw_hole = 2; // [0: no screwhole, 1: 1 screwhole, 2: 2 screwholes, 3: 3 screwholes, 4: 4 screwholes]
+screw_hole = 4; // [0: no screwhole, 1: 1 screwhole, 2: 2 screwholes, 3: 3 screwholes, 4: 4 screwholes]
 
 // Enable or disable the outer lip
 lip = true;
@@ -73,11 +73,11 @@ screw_head_h = 1; // [0:0.1:20]
 screw_shaft_d = 7; // [0:0.1:10]
 
 // Margin between the wall and the screwhole (mm)
-screw_hole_margin = 1; // [0:0.1:10]
+screw_hole_margin = 2.5; // [0:0.1:10]
 // Margin around the screw (mm)
 screw_margin = 1; // [0:0.1:2]
 // Distance from outer face to screw hole cutout (mm)
-screw_hole_edge_offset = 20; // [1:0.5:50]
+screw_hole_edge_offset = 32; // [1:0.5:50]
 // How many positions on the screwhole
 num_screw_positions = 3; // [3:4:23]
 
